@@ -248,3 +248,30 @@ colnames(reducedFeaturesDataframe)[ncol(reducedFeaturesDataframe)] <- "bp"
 summary(reducedFeaturesDataframe)
 
 ```
+
+### Split the data
+
+Randomly sample 20% of the total number of alkanes then create two datasets (train set and test set):
+
+```{r splitRFdata}
+
+# select ~20% test set
+test_selection_rf <- sample(nrow(reducedFeaturesDataframe), 0.2 * nrow(reducedFeaturesDataframe)) 
+
+traint_set_rf <- reducedFeaturesDataframe[-test_selection_rf,]
+test_set_rf <- reducedFeaturesDataframe[test_selection_rf,]
+```
+
+### Build the model
+
+Build the Random Forest model with 10-fold cross validation 
+
+```{r rfModel}
+train.control <- trainControl(method = "cv", number = 10)
+
+# Apply training using cross validation (train.control object) and random forest
+rf_model <- train(bp ~ ., data=traint_set_rf, method = "rf",
+                                 trControl = train.control)
+
+print(rf_model)
+```
