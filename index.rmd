@@ -82,3 +82,35 @@ alkanesData <- results %>%
 # output the final alkanes data frame as interactive HTML table with sort, search and pagination functions
 datatable(alkanesData[,c(1,3)], rownames = FALSE, filter="top", options = list(pageLength = 10, scrollX=T))
 ```
+
+## Calcualte the features (The Descriptors)
+
+Parse the SMILE strings of the compounds and calculate all the descriptors for each one of them. Then, bind the boiling points column to the descriptors data frame:
+
+```{r calcDescriptors}
+# parse the SMILE strings into IAtomCOntainer object for each Alkane compound
+mols <- parse.smiles(alkanesData$smile)
+
+# get a list of all descriptors available in CDK
+descriptorsNames <- get.desc.names(type = "all")
+
+# calculate the desctiptors for all the alkanes
+descriptors <- eval.desc(mols, descriptorsNames)
+
+# combine the descriptors values and the boiling points in one data frame
+featuresDataframe <- cbind(descriptors, alkanesData$bp)
+
+# change the name of the boiling point column into a more readable name
+colnames(featuresDataframe)[ncol(featuresDataframe)] <- "bp"
+```
+
+## Clean the data
+
+Remove the descriptors and molecules which have NA value(s):
+
+```{r removeNAs}
+featuresDataframe <- featuresDataframe[,colSums(is.na(featuresDataframe)) < nrow(featuresDataframe)]
+
+featuresDataframe <- featuresDataframe[rowSums(is.na(featuresDataframe)) == 0,]
+
+```
