@@ -275,3 +275,29 @@ rf_model <- train(bp ~ ., data=traint_set_rf, method = "rf",
 
 print(rf_model)
 ```
+
+
+
+### Apply the prediction
+
+```{r rfPrediction}
+predict_rf <- predict(rf_model, newdata = test_set_rf)
+
+```
+
+```{r rfPredictionPlot,  fig.align='center'}
+plot (predict_rf, test_set_rf$bp, pch=16,col="blue")
+abline(a=0,b=1,lwd=1)
+
+```
+
+```{r r2}
+R2 <- 1 - (sum((test_set_rf$bp-predict_rf)^2)/sum((test_set_rf$bp-mean(test_set_rf$bp))^2))
+
+R2
+
+```
+
+### By comparing the results of PLS and Random forest, we see that random forest gives better results
+
+
