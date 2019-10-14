@@ -212,3 +212,39 @@ RMSEP(pls_model, newdata = test_set)
 R2(pls_model, newdata = test_set)
 
 ```
+
+
+## Second Model: Random Forest
+
+
+### Feature selection
+
+Since the number of predictors is large (221) compared to the number of observation, we will use recursive feature elimination (RFE) from the "caret" package to extract the most 15 important variables and use them to build a rendom forest model to predict the boiling point of Alkanes.
+
+```{r featureSelectionRF}
+# define seed for generating random numbers for reproducibility
+set.seed(123) 
+
+# control variable with 10-fold cross validation
+rfe_control <- rfeControl(functions=rfFuncs, method="cv", number=10)
+
+# run the RFE algorithm
+# 1st paramerer: the dataset without the dependent variable
+# 2nd parameter: the vector holding the dependent variable(bp)
+# 3rd parameter: the set of features sizes to be tested (10 features, 15 features ...etc)
+feature_selection_model <- rfe(featuresDataframe[,1:ncol(featuresDataframe)-1], featuresDataframe[,ncol(featuresDataframe)], sizes=c(10,15,20,25,30), rfeControl=rfe_control)
+
+# selecting the top 15 most important variables for our final dataset
+selected_vars <- feature_selection_model$optVariables[1:15]
+
+# select only the 15 columns from the features data frame
+reducedFeaturesDataframe <- featuresDataframe[,which(unlist(colnames(featuresDataframe)) %in% selected_vars)] 
+
+# bind the boiling point column with the features data frame
+reducedFeaturesDataframe <- cbind(reducedFeaturesDataframe, featuresDataframe[,ncol(featuresDataframe)])
+colnames(reducedFeaturesDataframe)[ncol(reducedFeaturesDataframe)] <- "bp"
+
+# summary of the 15 selected descriptors
+summary(reducedFeaturesDataframe)
+
+```
