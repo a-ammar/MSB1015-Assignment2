@@ -1,0 +1,45 @@
+---
+title: "MSB 1015 Scientific Programming - Assignment 2"
+author: "Ammar Ammar"
+date: "October 12, 2019"
+output:
+  html_document:
+    highlight: tango
+    theme: flatly
+---
+
+## Dependencies
+
+First, you have to check if the required packages are already installed. If not, install them:
+
+```{r installPackages}
+requiredPackages <- c("WikidataQueryServiceR", # run SPARQL query against Wikidata
+                      "rJava",  # required for rcdk
+                      "rcdk",   # cheminformatics library
+                      "randomForest", # Random forest machine learning library
+                      "caret",  # Classification And REgression Training 
+                      "dplyr",  # data manipulation library
+                      "stringr", # string manipulation library
+                      "pls",   # Partial Least Squares regression library
+                      "measurements",  # library to convert to many units
+                      "DT") # generate interactive data tables
+
+for (pkg in requiredPackages) { 
+    if(! pkg %in% row.names(installed.packages())) install.packages(pkg)
+}
+```
+
+Load the required packages:
+
+```{r loadPackages, results = 'hide', message=FALSE, warning=FALSE}
+library(WikidataQueryServiceR)
+library(rJava)
+library(rcdk)
+library(randomForest)
+library(caret)
+library(dplyr)
+library(stringr)
+library(pls)
+library(measurements)
+library(DT)
+```
