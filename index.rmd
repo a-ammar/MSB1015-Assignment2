@@ -114,3 +114,33 @@ featuresDataframe <- featuresDataframe[,colSums(is.na(featuresDataframe)) < nrow
 featuresDataframe <- featuresDataframe[rowSums(is.na(featuresDataframe)) == 0,]
 
 ```
+
+## First Model: Prtial Least Squares
+
+
+### Split the data
+
+Randomly sample 20% of the total number of alkanes then create two datasets (train set and test set):
+
+```{r splitDataset}
+
+# set a set to generate the same random numbers (for reproducibility)
+set.seed(123)
+
+# select ~20% test set
+test_selection <- sample(nrow(featuresDataframe), 0.2 * nrow(featuresDataframe))
+
+# create train and test datasets from the features dataframe
+traint_set <- featuresDataframe[-test_selection,]
+test_set <- featuresDataframe[test_selection,]
+```
+
+### Build the model
+
+Here, we fit a partial least square model on the training set. This fits a model with 10 components, and includes leave-one-out (LOO) cross-validated predictions:
+
+```{r fitPLS}
+pls_model <- plsr(bp ~ ., ncomp = 10, data = traint_set, validation = "LOO")
+
+summary(pls_model)
+```
