@@ -13,6 +13,8 @@ output:
 First, you have to check if the required packages are already installed. If not, install them:
 
 ```{r installPackages}
+chooseCRANmirror(graphics=FALSE, ind=1)
+
 requiredPackages <- c("WikidataQueryServiceR", # run SPARQL query against Wikidata
                       "rJava",  # required for rcdk
                       "rcdk",   # cheminformatics library
