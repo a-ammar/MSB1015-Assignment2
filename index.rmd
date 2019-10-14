@@ -43,3 +43,42 @@ library(pls)
 library(measurements)
 library(DT)
 ```
+
+## Load Data
+
+Prepare a SPARQL query to get alkanes with their smiles and boiling points from Wikidata
+
+
+```{r sparql}
+sparql_query <- 'SELECT ?comp ?compLabel ?smile ?bp ?bpUnit ?bpUnitLabel WHERE {
+  ?comp wdt:P31/wdt:P279* wd:Q41581 ;
+        wdt:P233 ?smile ;
+        p:P2102 [
+          ps:P2102 ?bp ;
+          psv:P2102/wikibase:quantityUnit  ?bpUnit
+        ] .
+  SERVICE wikibase:label { bd:serviceParam wikibase:language     "[AUTO_LANGUAGE],en". }
+}'
+
+results <- query_wikidata(sparql_query)
+
+summary(results)
+
+```
+
+## Preprocess the data
+
+Next, process the boiling point by looking at the unit label and convert from Fahrenheit and Celesius to Kelvin. Then, select only the alkan label, SMILE and boiling point into a new data frame:
+
+```{r filterResults}
+
+# if the unit in Fagrenheit or Celesius, use conv_unit function from the "measurements" library to convert the temprature to Kelvin
+alkanesData <- results %>%
+               mutate(bp = case_when(bpUnitLabel == "degree Fahrenheit" ~ conv_unit(bp ,"F","K"),
+                                     bpUnitLabel == "degree Celsius" ~ conv_unit(bp ,"C","K"),
+                                     TRUE ~ bp)) %>%
+               select(compLabel, smile, bp)
+
+# output the final alkanes data frame as interactive HTML table with sort, search and pagination functions
+datatable(alkanesData[,c(1,3)], rownames = FALSE, filter="top", options = list(pageLength = 10, scrollX=T))
+```
