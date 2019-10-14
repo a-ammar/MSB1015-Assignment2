@@ -144,3 +144,31 @@ pls_model <- plsr(bp ~ ., ncomp = 10, data = traint_set, validation = "LOO")
 
 summary(pls_model)
 ```
+
+The validation results in the following plot are Root Mean Squared Error of Prediction (RMSEP). There are two cross-validation estimates: CV is the ordinary CV estimate, and adjCV is a bias-corrected CV estimate. (For a LOO CV, there is virtually no difference).
+It is often simpler to judge the RMSEPs by plotting them:
+```{r plotRMSEP, fig.align='center'}
+
+#plot estimated RMSEPs as functions of the number of component.
+#The legendpos argument adds a legend at the indicated position
+plot(RMSEP(pls_model), legendpos = "topright", main="RMSEP vs. number of components")
+```
+```{r printRMSEP}
+RMSEP(pls_model)
+```
+
+
+**Three components seem to be enough**. Once the number of components has been chosen, one can inspect different aspects of the fit by plotting predictions, scores, correlation and coeffecients .. etc.
+
+Left plot visualizes the regression coefficients for the first three components and shows the impact of the predictors on the boiling point. The X axis is the predictor index and the Y axis is the regression coeffecient.
+
+Right plot shows the cross-validated predictions with three components versus measured values. We have chosen to draw a target line using the paramter line=TRUE.
+
+
+```{r plotModel, out.width=c('50%', '50%'), fig.show='hold'}
+
+plot(pls_model, plottype = "coeff", ncomp = 3, main="Boiling Point PLS coeffecients plot")
+
+plot(pls_model, plottype = "prediction", ncomp = 3, main="Boiling Point PLS CV predicion plot", line=TRUE, pch=16,col="blue")
+```
+
