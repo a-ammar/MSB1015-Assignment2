@@ -172,3 +172,43 @@ plot(pls_model, plottype = "coeff", ncomp = 3, main="Boiling Point PLS coeffecie
 plot(pls_model, plottype = "prediction", ncomp = 3, main="Boiling Point PLS CV predicion plot", line=TRUE, pch=16,col="blue")
 ```
 
+### Apply prediction
+
+The fitted model is used to predict the response values of the test dataset. The following predicts the responses for the 27 alkanes in test_set, using three components:
+
+```{r prediction}
+# use the fitted model to predict the values of the test dataset using 3 components
+predicted_test <- predict(pls_model, ncomp = 3, newdata = test_set)
+```
+
+R^2 is a statistical measure that represents the proportion of the variance for a dependent variable that's explained by an independent variable or variables in a regression model. By plotting the R^2 values againt the number of components we can see that for three components, ~99% of the variance is explained by 3 components.
+
+```{r predictionPlots, out.width=c('50%', '50%'), fig.show='hold'}
+# plot the R2 values as a measure of prediction performance
+plot(R2(pls_model, newdata = test_set), main="Boiling point PLS, R2 vs. number of components")
+
+# plot the predictet value vs. the measured values of the test set
+predplot(pls_model, ncomp = 3, newdata = test_set, line = TRUE, pch=16,col="blue", main="Boiling point, 3 components, test set")
+```
+
+Also, we report the RMSEP plot for the test set
+
+```{r predictionRMSEP, fig.align='center'}
+
+# plot the RMSEP for the test set
+plot(RMSEP(pls_model, newdata = test_set), legendpos = "topright")
+
+```
+
+```{r printRMSEPtest}
+
+RMSEP(pls_model, newdata = test_set)
+```
+
+**R2 values**
+
+```{r printR2test}
+
+R2(pls_model, newdata = test_set)
+
+```
